@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - Halloween</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #121212; color: #f1f1f1; padding: 40px; text-align: center; }
+        .form-box { background: #1e1e1e; border: 2px solid #ff7518; border-radius: 10px; padding: 30px; width: 300px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+        input { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #444; background: #2c2c2c; color: #fff; }
+        button { background: #ff7518; color: #fff; border: none; padding: 10px 15px; cursor: pointer; border-radius: 5px; font-weight: bold; width: 100%; }
+        button:hover { background: #e05e0b; }
+        a { color: #ffa500; display: block; margin-top: 15px; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div class="form-box">
+        <h2>Registro 🎃</h2>
+        <form id="registroForm">
+            <input type="text" id="nombre" placeholder="Elige un usuario" required>
+            <input type="password" id="clave" placeholder="Contraseña" required>
+            <button type="submit">Registrarse</button>
+        </form>
+        <a href="login.html">¿Ya tienes cuenta? Inicia sesión</a>
+    </div>
+
+    <script>
+        document.getElementById('registroForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre').value;
+            const clave = document.getElementById('clave').value;
+
+            try {
+                const response = await fetch('api/registro.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre, clave })
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('¡Registro exitoso! Ya puedes iniciar sesión.');
+                    window.location.href = 'login.html';
+                } else {
+                    alert(data.error || 'Error al registrarse');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
+
+</body>
+</html>
