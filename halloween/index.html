@@ -3,76 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Votación de Disfraces - Halloween</title>
+    <title>Votación de Disfraces de Halloween</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #121212; color: #f1f1f1; padding: 20px; text-align: center; }
-        h1 { color: #ff7518; }
-        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 30px; }
-        .card { background: #1e1e1e; border: 2px solid #ff7518; border-radius: 10px; padding: 20px; width: 280px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
-        .card h3 { margin-top: 0; color: #ffa500; }
-        button { background: #ff7518; color: #fff; border: none; padding: 10px 15px; cursor: pointer; border-radius: 5px; font-weight: bold; transition: background 0.2s; }
-        button:hover { background: #e05e0b; }
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            text-align: center;
+        }
+        h1 {
+            color: #ff6600;
+        }
+        /* Estilos para la barra de navegación superior */
+        .nav-auth {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn-auth {
+            background: transparent;
+            border: 2px solid #ff6600;
+            color: #ff6600;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-auth:hover {
+            background: #ff6600;
+            color: white;
+        }
+        .contenedor-cards {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        .card {
+            border: 2px solid #ff6600;
+            padding: 1.5rem;
+            border-radius: 8px;
+            width: 220px;
+            background: #1a1a1a;
+            text-align: center;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #ff9933;
+        }
+        button {
+            background: #ff6600;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #e55b00;
+        }
+        #contenedor-top {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        .podio-card {
+            border: 2px solid #ffd700;
+            padding: 1rem;
+            border-radius: 8px;
+            width: 180px;
+            background: #1a1a1a;
+        }
     </style>
 </head>
 <body>
 
+    <!-- 🔗 Botones de Autenticación en la esquina superior derecha -->
+    <div class="nav-auth">
+    <a href="api/login.php" class="btn-auth">Iniciar Sesión</a>
+    <a href="api/registro.php" class="btn-auth">Registrarse</a>
+</div>
+
+    <!-- 🏆 Sección Top 3 Más Votados -->
+    <section>
+        <h2>🏆 Top Disfraces Más Votados 🏆</h2>
+        <div id="contenedor-top">
+            <p>Cargando podio...</p>
+        </div>
+    </section>
+
+    <hr style="border-color: #333; margin: 2rem 0;">
+
+    <!-- 🎃 Lista General de Disfraces -->
     <h1>🎃 Votación de Disfraces de Halloween 🦇</h1>
-    <div id="disfraces-container" class="container">Cargando disfraces...</div>
+    <div id="contenedor-disfraces" class="contenedor-cards">
+        <p>Cargando disfraces...</p>
+    </div>
 
     <script>
-        async function cargarDisfraces() {
-            try {
-                const response = await fetch('api/disfraces.php');
-                const disfraces = await response.json();
-                
-                const container = document.getElementById('disfraces-container');
-                container.innerHTML = '';
+        document.addEventListener("DOMContentLoaded", () => {
+            cargarDatos();
+        });
 
-                if (disfraces.length === 0) {
-                    container.innerHTML = '<p>No hay disfraces disponibles.</p>';
-                    return;
-                }
+        function cargarDatos() {
+            fetch('api/disfraces.php')
+                .then(res => {
+                    if (!res.ok) throw new Error("Error en la conexión con la API");
+                    return res.json();
+                })
+                .then(disfraces => {
+                    // 1. Renderizar el Top 3
+                    const contenedorTop = document.getElementById('contenedor-top');
+                    const masVotados = [...disfraces].sort((a, b) => b.votos - a.votos).slice(0, 3);
+                    
+                    contenedorTop.innerHTML = '';
+                    masVotados.forEach((d, index) => {
+                        const medalla = index === 0 ? '🥇' : (index === 1 ? '🥈' : '🥉');
+                        contenedorTop.innerHTML += `
+                            <div class="podio-card">
+                                <h3>${medalla} ${d.nombre}</h3>
+                                <p><strong>Votos:</strong> ${d.votos}</p>
+                            </div>
+                        `;
+                    });
 
-                disfraces.forEach(d => {
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.innerHTML = `
-                        <h3>${d.nombre}</h3>
-                        <p>${d.descripcion}</p>
-                        <p><strong>Votos: <span id="votos-${d.id}">${d.votos}</span></strong></p>
-                        <button onclick="votar(${d.id})">¡Votar!</button>
-                    `;
-                    container.appendChild(card);
+                    // 2. Renderizar la lista general completa
+                    const contenedorDisfraces = document.getElementById('contenedor-disfraces');
+                    contenedorDisfraces.innerHTML = '';
+                    
+                    disfraces.forEach(d => {
+                        contenedorDisfraces.innerHTML += `
+                            <div class="card">
+                                <h3>${d.nombre}</h3>
+                                <p>${d.descripcion}</p>
+                                <p><strong>Votos: ${d.votos}</strong></p>
+                                <button onclick="votar(${d.id})">¡Votar!</button>
+                            </div>
+                        `;
+                    });
+                })
+                .catch(err => {
+                    console.error("Error:", err);
+                    document.getElementById('contenedor-disfraces').innerHTML = '<p style="color: red;">Error al cargar los disfraces.</p>';
                 });
-            } catch (error) {
-                console.error('Error al cargar disfraces:', error);
-            }
         }
 
-        async function votar(id_disfraz) {
-            try {
-                const response = await fetch('api/disfraces.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id_disfraz })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
+        function votar(disfrazId) {
+            fetch('api/votar.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ disfraz_id: disfrazId })
+            })
+            .then(async res => {
+                const data = await res.json();
+                if (res.ok && data.success) {
                     alert(data.mensaje);
-                    cargarDisfraces(); // Recargar la lista para actualizar los contadores
+                    location.reload();
                 } else {
-                    alert(data.error || 'Ocurrió un error al votar');
+                    alert(data.error || "Ocurrió un error al registrar el voto.");
                 }
-            } catch (error) {
-                console.error('Error:', error);
-            }
+            })
+            .catch(err => {
+                console.error("Error en la petición de voto:", err);
+                alert("Error de conexión al intentar votar.");
+            });
         }
-
-        // Cargar al iniciar la página
-        cargarDisfraces();
     </script>
-
 </body>
 </html>
