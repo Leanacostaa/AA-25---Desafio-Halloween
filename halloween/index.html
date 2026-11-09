@@ -13,8 +13,14 @@
             padding: 2rem;
             text-align: center;
         }
+        /* Corregido el contraste de h1 y h2 para asegurar la puntuación de Lighthouse */
         h1 {
-            color: #ff6600;
+            color: #ff7518; 
+            font-size: 2rem;
+        }
+        h2 {
+            color: #ff9933;
+            font-size: 1.5rem;
         }
         /* Estilos para la barra de navegación superior */
         .nav-auth {
@@ -27,7 +33,7 @@
         .btn-auth {
             background: transparent;
             border: 2px solid #ff6600;
-            color: #ff6600;
+            color: #ff9933; /* Contraste mejorado */
             padding: 0.5rem 1rem;
             border-radius: 4px;
             cursor: pointer;
@@ -35,9 +41,11 @@
             text-decoration: none;
             transition: all 0.2s;
         }
-        .btn-auth:hover {
+        .btn-auth:hover, .btn-auth:focus-visible {
             background: #ff6600;
             color: white;
+            outline: 3px solid #ff7518;
+            outline-offset: 2px;
         }
         .contenedor-cards {
             display: flex;
@@ -68,8 +76,10 @@
             font-weight: bold;
             transition: background 0.2s;
         }
-        button:hover {
+        button:hover, button:focus-visible {
             background: #e55b00;
+            outline: 3px solid #ff7518;
+            outline-offset: 2px;
         }
         #contenedor-top {
             display: flex;
@@ -89,27 +99,39 @@
 </head>
 <body>
 
-    <!-- 🔗 Botones de Autenticación en la esquina superior derecha -->
-    <div class="nav-auth">
-    <a href="api/login.php" class="btn-auth">Iniciar Sesión</a>
-    <a href="api/registro.php" class="btn-auth">Registrarse</a>
-</div>
-
-    <!-- 🏆 Sección Top 3 Más Votados -->
-    <section>
-        <h2>🏆 Top Disfraces Más Votados 🏆</h2>
-        <div id="contenedor-top">
-            <p>Cargando podio...</p>
+    <!-- 🔗 Botones de Autenticación envueltos en un header semántico -->
+    <header>
+        <div class="nav-auth">
+            <a href="api/login.php" class="btn-auth">Iniciar Sesión</a>
+            <a href="api/registro.php" class="btn-auth">Registrarse</a>
         </div>
-    </section>
+    </header>
 
-    <hr style="border-color: #333; margin: 2rem 0;">
+    <!-- 🎯 Contenedor principal obligatorio para la marca semántica de accesibilidad -->
+    <main>
 
-    <!-- 🎃 Lista General de Disfraces -->
-    <h1>🎃 Votación de Disfraces de Halloween 🦇</h1>
-    <div id="contenedor-disfraces" class="contenedor-cards">
-        <p>Cargando disfraces...</p>
-    </div>
+        <!-- 🎃 Título principal del sitio (H1) -->
+        <h1>🎃 Votación de Disfraces de Halloween 🦇</h1>
+
+        <!-- 🏆 Sección Top 3 Más Votados (Encabezado secundario H2) -->
+        <section>
+            <h2>🏆 Top Disfraces Más Votados 🏆</h2>
+            <div id="contenedor-top">
+                <p>Cargando podio...</p>
+            </div>
+        </section>
+
+        <hr style="border-color: #333; margin: 2rem 0;">
+
+        <!-- 📋 Lista General de Disfraces (Encabezado secundario H2) -->
+        <section>
+            <h2>📋 Listado General de Disfraces</h2>
+            <div id="contenedor-disfraces" class="contenedor-cards">
+                <p>Cargando disfraces...</p>
+            </div>
+        </section>
+
+    </main>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {

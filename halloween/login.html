@@ -1,24 +1,43 @@
 <!DOCTYPE html>
 <html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - Halloween</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #121212; color: #f1f1f1; padding: 40px; text-align: center; }
-        .form-box { background: #1e1e1e; border: 2px solid #ff7518; border-radius: 10px; padding: 30px; width: 300px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
-        input { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #444; background: #2c2c2c; color: #fff; }
+        .form-box { background: #1e1e1e; border: 2px solid #ff7518; border-radius: 10px; padding: 30px; width: 300px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0,0,0,0.3); text-align: left; }
+        h2 { color: #ff7518; text-align: center; }
+        label { display: block; margin-top: 10px; font-size: 0.9rem; color: #ff9933; }
+        input { width: 100%; box-sizing: border-box; padding: 10px; margin: 5px 0 15px 0; border-radius: 5px; border: 1px solid #444; background: #2c2c2c; color: #fff; }
         button { background: #ff7518; color: #fff; border: none; padding: 10px 15px; cursor: pointer; border-radius: 5px; font-weight: bold; width: 100%; }
-        button:hover { background: #e05e0b; }
-        a { color: #ffa500; display: block; margin-top: 15px; text-decoration: none; }
+        button:hover, button:focus-visible { background: #e05e0b; }
+        a { color: #ffa500; display: block; margin-top: 15px; text-decoration: none; text-align: center; }
+        /* Accesibilidad: Foco visible */
+        input:focus-visible, button:focus-visible, a:focus-visible {
+            outline: 3px solid #ff7518;
+            outline-offset: 2px;
+        }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
     </style>
 </head>
 <body>
 
     <div class="form-box">
         <h2>Iniciar Sesión 🦇</h2>
+        
+        <!-- Región viva para lectores de pantalla -->
+        <div id="mensaje-alerta" aria-live="polite" class="sr-only"></div>
+
         <form id="loginForm">
-            <input type="text" id="nombre" placeholder="Nombre de usuario" required>
-            <input type="password" id="clave" placeholder="Contraseña" required>
+            <label for="nombre">Nombre de usuario:</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Nombre de usuario" required aria-required="true">
+
+            <label for="clave">Contraseña:</label>
+            <input type="password" id="clave" name="clave" placeholder="Contraseña" required aria-required="true">
+
             <button type="submit">Entrar</button>
         </form>
         <a href="registro.html">¿No tienes cuenta? Regístrate</a>
@@ -29,6 +48,7 @@
             e.preventDefault();
             const nombre = document.getElementById('nombre').value;
             const clave = document.getElementById('clave').value;
+            const alerta = document.getElementById('mensaje-alerta');
 
             try {
                 const response = await fetch('api/login.php', {
@@ -39,13 +59,17 @@
                 const data = await response.json();
 
                 if (response.ok) {
+                    alerta.textContent = '¡Bienvenido ' + data.usuario + '!';
                     alert('¡Bienvenido ' + data.usuario + '!');
-                    window.location.href = 'index.html'; // Redirigir a la votación
+                    window.location.href = 'index.html';
                 } else {
-                    alert(data.error || 'Error al iniciar sesión');
+                    const errorMsg = data.error || 'Error al iniciar sesión';
+                    alerta.textContent = errorMsg;
+                    alert(errorMsg);
                 }
             } catch (error) {
                 console.error('Error:', error);
+                alerta.textContent = 'Error de conexión con el servidor.';
             }
         });
     </script>
