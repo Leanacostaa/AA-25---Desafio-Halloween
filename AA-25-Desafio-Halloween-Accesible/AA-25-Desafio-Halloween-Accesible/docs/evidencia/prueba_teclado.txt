@@ -1,0 +1,37 @@
+1) ORDEN DE TABULACIÓN EN index.html (sin sesión)
+   Tab 1: <a> Saltar al contenido principal  [foco visible ✓]
+   Tab 2: <a> 🎃 La Web del Terror  [foco visible ✓]
+   Tab 3: <a> Iniciar sesión  [foco visible ✓]
+   Tab 4: <a> Registrarse  [foco visible ✓]
+   Tab 5: <button> Votar por Bruja  [foco visible ✓]
+   Tab 6: <button> Votar por el pomberito  [foco visible ✓]
+   Tab 7: <button> Votar por Fantasma  [foco visible ✓]
+   Tab 8: <button> Votar por Zombie  [foco visible ✓]
+   Tab 9: <button> Votar por Vampiro  [foco visible ✓]
+   axe-core (portada sin sesión): 0 violaciones WCAG 2.1 AA
+   Enter en "Saltar al contenido" -> foco en: contenido; siguiente Tab: <button> Votar por Bruja  [foco visible ✓]
+2) VOTAR SIN SESIÓN (Enter sobre "Votar")
+   aria-live anuncia: "Tenés que iniciar sesión para votar. Usá el enlace "Iniciar sesión" del encabezado."
+   El foco permanece en: <button> Votar por Bruja  [foco visible ✓]
+   axe-core (portada con aviso de error): 0 violaciones WCAG 2.1 AA
+3) REGISTRO SOLO CON TECLADO
+   Tab x4: <a> Registrarse  [foco visible ✓] -> Enter
+   Tab hasta: <input> Contraseña  [foco visible ✓]
+   Tab: <button> Registrarse  [foco visible ✓] -> Enter con el formulario vacío
+   aria-live anuncia: "El campo "Nombre de usuario" es obligatorio."; foco movido a: <input> Nombre de usuario  [foco visible ✓]
+   axe-core (registro con error de validación): 0 violaciones WCAG 2.1 AA
+   aria-live anuncia: "¡Registro exitoso! Ya podés iniciar sesión."
+4) LOGIN SOLO CON TECLADO
+   Tab x3: <input> Correo electrónico  [foco visible ✓]
+   Contraseña errónea + Enter -> aria-live: "Correo o contraseña incorrectos." (HTTP 401)
+   axe-core (login con error): 0 violaciones WCAG 2.1 AA
+   Contraseña correcta + Enter -> redirige a index.html
+5) VOTAR CON SESIÓN INICIADA
+   Saltar contenido + Tab x2: <button> Votar por el pomberito  [foco visible ✓] -> Enter
+   aria-live anuncia: "Voto registrado para el pomberito. ¡Gracias por participar!"
+   Tras re-renderizar, el foco vuelve a: <button> Votar por el pomberito  [foco visible ✓]
+   axe-core (portada con sesión y voto): 0 violaciones WCAG 2.1 AA
+   Segundo voto -> aria-live: "Ya emitiste tu voto. Solo se permite un voto por usuario." (HTTP 409)
+6) CERRAR SESIÓN
+   Tab x3: <button> Cerrar sesión  [foco visible ✓] -> Enter
+   aria-live: "Cerraste sesión correctamente."; foco pasa a: <a> Iniciar sesión  [foco visible ✓]
